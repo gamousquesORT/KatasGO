@@ -19,13 +19,9 @@ If the amount is less than the amount due it responds with â€œNot enough money.â
 Examples
 Items to Purchase > B, C, W / Total > $3.50 /Amount Paid > $4.00 Change > $0.50
 
-Items to Purchase > B
-Total > $0.65
-Amount Paid > $0.75
-Change > $0.10
-Items to Purchase > C,M
-Total > $2.35
-Amount Paid > $2.00
+Items to Purchase > B / Total > $0.65 / Amount Paid > $0.75 / Change > $0.10
+
+Items to Purchase > C,M / Total > $2.35 / Amount Paid > $2.00
 Change > Not enough money
 Items to Purchase > W
 Total > Not enough stock
@@ -45,28 +41,42 @@ func TestBakeSale(t *testing.T) {
 	t.Run("Should_Total$3.50_for_BCW",func(t *testing.T) {
 		got, change := BakeSale("B,C,W", 4.00)
 		wantTotal := "$3.50"
-		wantChange := 0.50
+		wantChange := "0.50"
 
 		if got != wantTotal {
 			t.Errorf("got %s want %s",got,wantTotal)
 
 		}
 		if change != wantChange {
-			t.Errorf("got %f want %f",change,wantChange)
+			t.Errorf("got %s want %s",change,wantChange)
 		}
 	})
 
 	t.Run("Should_Total$0.65_for_B",func(t *testing.T) {
 		got, change := BakeSale("B", 0.75)
 		wantTotal := "$0.65"
-		wantChange := 0.10
+		wantChange := "0.10"
 
 		if got != wantTotal {
 			t.Errorf("got %s want %s",got,wantTotal)
 
 		}
 		if change != wantChange {
-			t.Errorf("got %f want %f",change,wantChange)
+			t.Errorf("got %s want %s",change,wantChange)
+		}
+	})
+
+	t.Run("Should_Total_2.35_for_CM_Change_NoMoney",func(t *testing.T) {
+		got, change := BakeSale("CM", 2)
+		wantTotal := "$2.35"
+		wantChange := "Not enough money"
+
+		if got != wantTotal {
+			t.Errorf("got %s want %s",got,wantTotal)
+
+		}
+		if change != wantChange {
+			t.Errorf("got %s want %s",change,wantChange)
 		}
 	})
 
