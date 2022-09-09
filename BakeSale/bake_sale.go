@@ -6,6 +6,7 @@ func BakeSale(input string, total float64) (string, string) {
 	} else if input == "B" {
 		return "$0.65", "0.10"
 	} else if input == "CM" {
-	return "$2.35", "Not enough money"}
+		return "$2.35", "Not enough money"
+	}
 	return "", ""
 }
