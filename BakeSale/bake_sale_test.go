@@ -56,7 +56,7 @@ func TestBakeSaleAmount(t *testing.T) {
 	t.Run("Should_Total$3.50_for_BCW", func(t *testing.T) {
 		var items = map[string]Item{"B": {0.65, 48}, "M": {1.0, 36}, "C": {1.35, 24}, "W": {1.5, 2}}
 		SetItemsValues(items)
-		CheckTotal(t, "BCW", "$3.50")
+		CheckTotal(t, "B,C,W", "$3.50")
 	})
 
 	t.Run("Should_Total$0.65_for_B", func(t *testing.T) {
@@ -79,7 +79,7 @@ func TestBakeSaleTotal(t *testing.T) {
 	t.Run("Should_Return_change_foraPurchase BCW", func(t *testing.T) {
 		var items = map[string]Item{"B": {0.65, 48}, "M": {1.0, 36}, "C": {1.35, 24}, "W": {1.5, 2}}
 		SetItemsValues(items)
-		CheckTotal(t, "BCW", "$3.50")
+		CheckTotal(t, "B,C,W", "$3.50")
 		CheckChange(t, 4.0, "$0.50")
 	})
 
@@ -94,7 +94,7 @@ func TestBakeSaleTotal(t *testing.T) {
 	t.Run("Should_Return_NotEnoughMoney_foraPurchase CM", func(t *testing.T) {
 		var items = map[string]Item{"M": {1.0, 36}, "C": {1.35, 24}}
 		SetItemsValues(items)
-		CheckTotal(t, "CM", "$2.35")
+		CheckTotal(t, "C,M", "$2.35")
 		CheckChange(t, 2.0, "Not enough money")
 
 	})
