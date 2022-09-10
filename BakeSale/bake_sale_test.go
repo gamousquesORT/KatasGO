@@ -35,40 +35,42 @@ import (
 	"testing"
 )
 
+func CheckTotal(t *testing.T, purchase string, wantValue string) {
+	got := BakeSale(purchase)
+	wantTotal := wantValue
+
+	if got != wantTotal {
+		t.Errorf("got %s want %s", got, wantTotal)
+
+	}
+}
+
+func CheckChange(t *testing.T, amount float64, wantChange string) {
+	change := ComputeChange(amount)
+	if change != wantChange {
+		t.Errorf("got %s want %s", change, wantChange)
+	}
+}
+
 func TestBakeSaleAmount(t *testing.T) {
 	t.Run("Should_Total$3.50_for_BCW", func(t *testing.T) {
 		var items = map[string]Item{"B": {0.65, 48}, "M": {1.0, 36}, "C": {1.35, 24}, "W": {1.5, 2}}
 		SetItemsValues(items)
-		got := BakeSale("B,C,W")
-		wantTotal := "$3.50"
-
-		if got != wantTotal {
-			t.Errorf("got %s want %s", got, wantTotal)
-
-		}
+		CheckTotal(t, "BCW", "$3.50")
 	})
 
 	t.Run("Should_Total$0.65_for_B", func(t *testing.T) {
 		var items = map[string]Item{"B": {0.65, 48}}
 		SetItemsValues(items)
-		got := BakeSale("B")
-		wantTotal := "$0.65"
+		CheckTotal(t, "B", "$0.65")
 
-		if got != wantTotal {
-			t.Errorf("got %s want %s", got, wantTotal)
-		}
 	})
 
 	t.Run("Should_getNoStock_for_W", func(t *testing.T) {
 		var items = map[string]Item{"W": {1.5, 1}}
 		SetItemsValues(items)
-		got := BakeSale("W")
-		wantTotal := "Not enough stock"
+		CheckTotal(t, "W", "Not enough stock")
 
-		if got != wantTotal {
-			t.Errorf("got %s want %s", got, wantTotal)
-
-		}
 	})
 
 }
@@ -77,53 +79,23 @@ func TestBakeSaleTotal(t *testing.T) {
 	t.Run("Should_Return_change_foraPurchase BCW", func(t *testing.T) {
 		var items = map[string]Item{"B": {0.65, 48}, "M": {1.0, 36}, "C": {1.35, 24}, "W": {1.5, 2}}
 		SetItemsValues(items)
-
-		wantTotal := "$3.50"
-		wantChange := "$0.50"
-
-		got := BakeSale("B,C,W")
-		change := ComputeChange(4.0)
-		if got != wantTotal {
-			t.Errorf("got %s want %s", got, wantTotal)
-
-		}
-		if change != wantChange {
-			t.Errorf("got %s want %s", change, wantChange)
-		}
+		CheckTotal(t, "BCW", "$3.50")
+		CheckChange(t, 4.0, "$0.50")
 	})
 
 	t.Run("Should_Return_change_foraPurchase B", func(t *testing.T) {
 		var items = map[string]Item{"B": {0.65, 48}}
 		SetItemsValues(items)
-		wantTotal := "$0.65"
-		wantChange := "$0.10"
-		got := BakeSale("B")
-		change := ComputeChange(0.75)
+		CheckTotal(t, "B", "$0.65")
+		CheckChange(t, 0.75, "$0.10")
 
-		if got != wantTotal {
-			t.Errorf("got %s want %s", got, wantTotal)
-
-		}
-		if change != wantChange {
-			t.Errorf("got %s want %s", change, wantChange)
-		}
 	})
 
 	t.Run("Should_Return_NotEnoughMoney_foraPurchase CM", func(t *testing.T) {
 		var items = map[string]Item{"M": {1.0, 36}, "C": {1.35, 24}}
 		SetItemsValues(items)
+		CheckTotal(t, "CM", "$2.35")
+		CheckChange(t, 2.0, "Not enough money")
 
-		wantTotal := "$2.35"
-		wantChange := "Not enough money"
-		got := BakeSale("CM")
-		change := ComputeChange(2.0)
-
-		if got != wantTotal {
-			t.Errorf("got %s want %s", got, wantTotal)
-
-		}
-		if change != wantChange {
-			t.Errorf("got %s want %s", change, wantChange)
-		}
 	})
 }
