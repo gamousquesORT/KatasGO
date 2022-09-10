@@ -63,10 +63,10 @@ func TestBakeSale(t *testing.T) {
 		}
 	})
 
-	t.Run("Should_Total_2.35_for_CM_Change_NoMoney", func(t *testing.T) {
-		got, change := BakeSale("CM", 2)
-		wantTotal := "$2.35"
-		wantChange := "Not enough money"
+	t.Run("Should_getNoStocl_for_W_", func(t *testing.T) {
+		got, change := BakeSale("W", 0)
+		wantTotal := ""
+		wantChange := "Not enough stock"
 
 		if got != wantTotal {
 			t.Errorf("got %s want %s", got, wantTotal)
