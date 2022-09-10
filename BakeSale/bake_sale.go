@@ -8,7 +8,13 @@ type Item struct {
 }
 
 // var items = make(map[string]Item)
-var items = map[string]Item{"B": {0.65, 48}, "M": {1.0, 36}, "C": {1.35, 24}, "W": {1.5, 2}}
+var items = map[string]Item{}
+
+func SetItemsValues(initItems map[string]Item) {
+	items = initItems
+}
+
+var currentTotal = 0.0
 
 func BakeSale(input string) string {
 	var total float64
@@ -23,8 +29,17 @@ func BakeSale(input string) string {
 		}
 
 	}
+	currentTotal = total
 
 	return fmt.Sprintf("$%2.2f", total)
+}
+
+func ComputeChange(amountPaid float64) string {
+	if amountPaid < currentTotal {
+		return "Not enough money"
+	}
+	change := amountPaid - currentTotal
+	return fmt.Sprintf("$%2.2f", change)
 }
 
 func updateStock(char string) {

@@ -22,8 +22,9 @@ Items to Purchase > B, C, W / Total > $3.50 /Amount Paid > $4.00 Change > $0.50
 Items to Purchase > B / Total > $0.65 / Amount Paid > $0.75 / Change > $0.10
 
 Items to Purchase > C,M / Total > $2.35 / Amount Paid > $2.00/ Change > Not enough money
-Items to Purchase > W
-Total > Not enough stock
+
+Items to Purchase > W / Total > Not enough stock
+
 Hint
 Looks to use Stubs or Mocks or both when solving input and output problems.
 
@@ -34,8 +35,10 @@ import (
 	"testing"
 )
 
-func TestBakeSale(t *testing.T) {
+func TestBakeSaleAmount(t *testing.T) {
 	t.Run("Should_Total$3.50_for_BCW", func(t *testing.T) {
+		var items = map[string]Item{"B": {0.65, 48}, "M": {1.0, 36}, "C": {1.35, 24}, "W": {1.5, 2}}
+		SetItemsValues(items)
 		got := BakeSale("B,C,W")
 		wantTotal := "$3.50"
 
@@ -46,6 +49,8 @@ func TestBakeSale(t *testing.T) {
 	})
 
 	t.Run("Should_Total$0.65_for_B", func(t *testing.T) {
+		var items = map[string]Item{"B": {0.65, 48}}
+		SetItemsValues(items)
 		got := BakeSale("B")
 		wantTotal := "$0.65"
 
@@ -54,7 +59,9 @@ func TestBakeSale(t *testing.T) {
 		}
 	})
 
-	t.Run("Should_getNoStocl_for_W_", func(t *testing.T) {
+	t.Run("Should_getNoStock_for_W", func(t *testing.T) {
+		var items = map[string]Item{"W": {1.5, 1}}
+		SetItemsValues(items)
 		got := BakeSale("W")
 		wantTotal := "Not enough stock"
 
@@ -66,13 +73,16 @@ func TestBakeSale(t *testing.T) {
 
 }
 
-/*
-func TestBakeSale(t *testing.T) {
-	t.Run("Should_Total$3.50_for_BCW", func(t *testing.T) {
-		got, change := BakeSale("B,C,W", 4.00)
+func TestBakeSaleTotal(t *testing.T) {
+	t.Run("Should_Return_change_foraPurchase BCW", func(t *testing.T) {
+		var items = map[string]Item{"B": {0.65, 48}, "M": {1.0, 36}, "C": {1.35, 24}, "W": {1.5, 2}}
+		SetItemsValues(items)
+
 		wantTotal := "$3.50"
-		wantChange := "0.50"
+		wantChange := "$0.50"
 
+		got := BakeSale("B,C,W")
+		change := ComputeChange(4.0)
 		if got != wantTotal {
 			t.Errorf("got %s want %s", got, wantTotal)
 
@@ -82,10 +92,13 @@ func TestBakeSale(t *testing.T) {
 		}
 	})
 
-	t.Run("Should_Total$0.65_for_B", func(t *testing.T) {
-		got, change := BakeSale("B", 0.75)
+	t.Run("Should_Return_change_foraPurchase B", func(t *testing.T) {
+		var items = map[string]Item{"B": {0.65, 48}}
+		SetItemsValues(items)
 		wantTotal := "$0.65"
-		wantChange := "0.10"
+		wantChange := "$0.10"
+		got := BakeSale("B")
+		change := ComputeChange(0.75)
 
 		if got != wantTotal {
 			t.Errorf("got %s want %s", got, wantTotal)
@@ -96,10 +109,14 @@ func TestBakeSale(t *testing.T) {
 		}
 	})
 
-	t.Run("Should_getNoStocl_for_W_", func(t *testing.T) {
-		got, change := BakeSale("W", 0)
-		wantTotal := ""
-		wantChange := "Not enough stock"
+	t.Run("Should_Return_NotEnoughMoney_foraPurchase CM", func(t *testing.T) {
+		var items = map[string]Item{"M": {1.0, 36}, "C": {1.35, 24}}
+		SetItemsValues(items)
+
+		wantTotal := "$2.35"
+		wantChange := "Not enough money"
+		got := BakeSale("CM")
+		change := ComputeChange(2.0)
 
 		if got != wantTotal {
 			t.Errorf("got %s want %s", got, wantTotal)
@@ -109,6 +126,4 @@ func TestBakeSale(t *testing.T) {
 			t.Errorf("got %s want %s", change, wantChange)
 		}
 	})
-
 }
-*/
