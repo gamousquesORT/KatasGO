@@ -36,6 +36,39 @@ import (
 
 func TestBakeSale(t *testing.T) {
 	t.Run("Should_Total$3.50_for_BCW", func(t *testing.T) {
+		got := BakeSale("B,C,W")
+		wantTotal := "$3.50"
+
+		if got != wantTotal {
+			t.Errorf("got %s want %s", got, wantTotal)
+
+		}
+	})
+
+	t.Run("Should_Total$0.65_for_B", func(t *testing.T) {
+		got := BakeSale("B")
+		wantTotal := "$0.65"
+
+		if got != wantTotal {
+			t.Errorf("got %s want %s", got, wantTotal)
+		}
+	})
+
+	t.Run("Should_getNoStocl_for_W_", func(t *testing.T) {
+		got := BakeSale("W")
+		wantTotal := "Not enough stock"
+
+		if got != wantTotal {
+			t.Errorf("got %s want %s", got, wantTotal)
+
+		}
+	})
+
+}
+
+/*
+func TestBakeSale(t *testing.T) {
+	t.Run("Should_Total$3.50_for_BCW", func(t *testing.T) {
 		got, change := BakeSale("B,C,W", 4.00)
 		wantTotal := "$3.50"
 		wantChange := "0.50"
@@ -78,3 +111,4 @@ func TestBakeSale(t *testing.T) {
 	})
 
 }
+*/
