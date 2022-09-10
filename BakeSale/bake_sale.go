@@ -8,20 +8,31 @@ type Item struct {
 }
 
 // var items = make(map[string]Item)
-var items = map[string]Item{"B,C,W": {3.50, 3}, "B": {0.65, 1}, "C,M": {2.35, 2}, "W": {0.00, 0}}
-
-var currenItem Item
+var items = map[string]Item{"B": {0.65, 48}, "M": {1.0, 36}, "C": {1.35, 24}, "W": {1.5, 2}}
 
 func BakeSale(input string) string {
-	if input == "B,C,W" {
-		return fmt.Sprintf("$%2.2f", items[input].price)
-	} else if input == "B" {
-		return fmt.Sprintf("$%2.2f", items[input].price)
-	} else if input == "C,M" {
-		return fmt.Sprintf("$%2.2f", items[input].price)
-	} else if input == "W" {
-		return "Not enough stock"
+	var total float64
+	for i := 0; i < len(input); i++ {
+		char := string(input[i])
+		if char != "," {
+			total += getPrice(char)
+			updateStock(char)
+			if items[char].stock <= 0 {
+				return "Not enough stock"
+			}
+		}
+
 	}
 
-	return ""
+	return fmt.Sprintf("$%2.2f", total)
+}
+
+func updateStock(char string) {
+	actItem := items[char]
+	actItem.stock--
+	items[char] = actItem
+}
+
+func getPrice(prod string) float64 {
+	return items[prod].price
 }
