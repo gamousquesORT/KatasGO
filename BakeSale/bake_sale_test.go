@@ -35,8 +35,8 @@ import (
 	"testing"
 )
 
-func CheckTotal(t *testing.T, purchase string, wantValue string) {
-	got := BakeSale(purchase)
+func CheckTotal(t *testing.T, purchase *Sale, wantValue string) {
+	got := purchase.bakeSale()
 	wantTotal := wantValue
 
 	if got != wantTotal {
@@ -45,57 +45,51 @@ func CheckTotal(t *testing.T, purchase string, wantValue string) {
 	}
 }
 
-func CheckChange(t *testing.T, amount float64, wantChange string) {
-	change := ComputeChange(amount)
+func CheckChange(t *testing.T, purchase Sale, wantChange string) {
+	change := purchase.computeChange()
 	if change != wantChange {
 		t.Errorf("got %s want %s", change, wantChange)
 	}
 }
 
-func TestBakeSaleAmount(t *testing.T) {
-	t.Run("Should_Total$3.50_for_BCW", func(t *testing.T) {
-		var items = map[string]Item{"B": {0.65, 48}, "M": {1.0, 36}, "C": {1.35, 24}, "W": {1.5, 2}}
+func TestBakeSaleTotal(t *testing.T) {
+	t.Run("Should_Return_change_foraPurchase BCW", func(t *testing.T) {
+		var items = map[string]ItemData{"B": {0.65, 48}, "M": {1.0, 36}, "C": {1.35, 24}, "W": {1.5, 2}}
 		SetItemsValues(items)
-		CheckTotal(t, "B,C,W", "$3.50")
+		var p Sale
+		p.order = "B,C,W"
+		p.amountPaid = 4.0
+		CheckTotal(t, &p, "$3.50")
+		CheckChange(t, p, "$0.50")
 	})
 
-	t.Run("Should_Total$0.65_for_B", func(t *testing.T) {
-		var items = map[string]Item{"B": {0.65, 48}}
+	t.Run("Should_Return_change_foraPurchase B", func(t *testing.T) {
+		var items = map[string]ItemData{"B": {0.65, 48}}
 		SetItemsValues(items)
-		CheckTotal(t, "B", "$0.65")
+		var p Sale
+		p.order = "B"
+		p.amountPaid = 0.75
+		CheckTotal(t, &p, "$0.65")
+		CheckChange(t, p, "$0.10")
+	})
+
+	t.Run("Should_Return_NotEnoughMoney_foraPurchase CM", func(t *testing.T) {
+		var items = map[string]ItemData{"M": {1.0, 36}, "C": {1.35, 24}}
+		SetItemsValues(items)
+		var p Sale
+		p.order = "C,M"
+		p.amountPaid = 2.0
+		CheckTotal(t, &p, "$2.35")
+		CheckChange(t, p, "Not enough money")
 
 	})
 
 	t.Run("Should_getNoStock_for_W", func(t *testing.T) {
-		var items = map[string]Item{"W": {1.5, 1}}
+		var items = map[string]ItemData{"W": {1.5, 1}}
 		SetItemsValues(items)
-		CheckTotal(t, "W", "Not enough stock")
-
-	})
-
-}
-
-func TestBakeSaleTotal(t *testing.T) {
-	t.Run("Should_Return_change_foraPurchase BCW", func(t *testing.T) {
-		var items = map[string]Item{"B": {0.65, 48}, "M": {1.0, 36}, "C": {1.35, 24}, "W": {1.5, 2}}
-		SetItemsValues(items)
-		CheckTotal(t, "B,C,W", "$3.50")
-		CheckChange(t, 4.0, "$0.50")
-	})
-
-	t.Run("Should_Return_change_foraPurchase B", func(t *testing.T) {
-		var items = map[string]Item{"B": {0.65, 48}}
-		SetItemsValues(items)
-		CheckTotal(t, "B", "$0.65")
-		CheckChange(t, 0.75, "$0.10")
-
-	})
-
-	t.Run("Should_Return_NotEnoughMoney_foraPurchase CM", func(t *testing.T) {
-		var items = map[string]Item{"M": {1.0, 36}, "C": {1.35, 24}}
-		SetItemsValues(items)
-		CheckTotal(t, "C,M", "$2.35")
-		CheckChange(t, 2.0, "Not enough money")
+		var p Sale
+		p.order = "W"
+		CheckTotal(t, &p, "Not enough stock")
 
 	})
 }

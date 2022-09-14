@@ -2,28 +2,33 @@ package BakeSale
 
 import "fmt"
 
-type Item struct {
+type ItemData struct {
 	price float64
 	stock int
 }
 
-type Sales interface {
-	bakeSale() string
-}
+var items = map[string]ItemData{}
 
-// var items = make(map[string]Item)
-var items = map[string]Item{}
-
-func SetItemsValues(initItems map[string]Item) {
+func SetItemsValues(initItems map[string]ItemData) {
 	items = initItems
 }
 
-var currentTotal = 0.0
+type Sale struct {
+	order        string
+	currentTotal float64
+	amountPaid   float64
+}
 
-func BakeSale(input string) string {
+type ISale interface {
+	bakeSale() string
+	computeChange() string
+}
+
+func (s *Sale) bakeSale() string {
 	var total float64
-	for i := 0; i < len(input); i++ {
-		char := string(input[i])
+
+	for i := 0; i < len(s.order); i++ {
+		char := string(s.order[i])
 		if char != "," {
 			total += getPrice(char)
 			updateStock(char)
@@ -33,16 +38,15 @@ func BakeSale(input string) string {
 		}
 
 	}
-	currentTotal = total
-
-	return fmt.Sprintf("$%2.2f", total)
+	s.currentTotal = total
+	return fmt.Sprintf("$%2.2f", s.currentTotal)
 }
 
-func ComputeChange(amountPaid float64) string {
-	if amountPaid < currentTotal {
+func (s *Sale) computeChange() string {
+	if s.amountPaid < s.currentTotal {
 		return "Not enough money"
 	}
-	change := amountPaid - currentTotal
+	change := s.amountPaid - s.currentTotal
 	return fmt.Sprintf("$%2.2f", change)
 }
 
