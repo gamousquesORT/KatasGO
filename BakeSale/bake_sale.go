@@ -7,6 +7,10 @@ type Item struct {
 	stock int
 }
 
+type Sales interface {
+	bakeSale() string
+}
+
 // var items = make(map[string]Item)
 var items = map[string]Item{}
 
